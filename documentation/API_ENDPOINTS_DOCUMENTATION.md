@@ -2,7 +2,7 @@
 
 ## Overview
 
-The WhatsApp Service is a standalone microservice that provides WhatsApp integration capabilities for SaaS platforms. It supports multiple WhatsApp instances, message sending (text, polls, images, documents), and connection management.
+The WhatsApp Service is a standalone microservice that provides WhatsApp integration capabilities. It supports multiple WhatsApp instances, message sending (text, polls, images, documents), and connection management.
 
 **Base URL**: `http://localhost:8080` (configurable via PORT environment variable)
 

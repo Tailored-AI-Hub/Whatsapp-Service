@@ -80,44 +80,6 @@ The API now validates:
 }
 ```
 
-## Technical Details for Non-JavaScript Developers
-
-### What is a "Switch Statement"?
-
-Think of a switch statement like a traffic light system:
-- When you approach an intersection, the light tells you what to do
-- Green = go, Red = stop, Yellow = slow down
-- Similarly, the code checks the message type and executes different code for each type
-
-```javascript
-switch (messageType) {
-  case 'image':     // If messageType is 'image'
-    // Handle image logic
-    break;
-  case 'pdf':       // If messageType is 'pdf'
-    // Handle PDF logic
-    break;
-  default:          // If none of the above match
-    // Handle text message (default)
-    break;
-}
-```
-
-### What is "Type Checking"?
-
-Type checking is like verifying what kind of data you're working with:
-- A string is text enclosed in quotes: `"hello"`
-- An object is data enclosed in curly braces: `{"name": "value"}`
-- The code checks which type you provided and handles it accordingly
-
-### URL Validation
-
-The system validates URLs to ensure they're properly formatted:
-- Valid: `https://example.com/image.jpg`
-- Invalid: `not-a-url`
-
-This prevents errors when trying to send media files.
-
 ## Error Handling
 
 ### Common Errors and Solutions
@@ -162,54 +124,6 @@ The endpoint remains the same: `POST /api/send`
 }
 ```
 
-## Examples in Different Programming Languages
-
-### Python
-```python
-import requests
-
-# Send an image
-response = requests.post('http://localhost:8080/api/send', json={
-    'instanceId': 'your-instance-id',
-    'response_msg': 'https://example.com/image.jpg',
-    'options': {
-        'messageType': 'image',
-        'caption': 'Check out this image!'
-    }
-})
-```
-
-### Java
-```java
-// Using OkHttp
-String jsonBody = "{\"instanceId\":\"your-instance-id\",\"response_msg\":\"https://example.com/image.jpg\",\"options\":{\"messageType\":\"image\",\"caption\":\"Check out this image!\"}}";
-
-RequestBody body = RequestBody.create(jsonBody, MediaType.parse("application/json"));
-Request request = new Request.Builder()
-    .url("http://localhost:8080/api/send")
-    .post(body)
-    .build();
-```
-
-### C#
-```csharp
-// Using HttpClient
-var data = new
-{
-    instanceId = "your-instance-id",
-    response_msg = "https://example.com/image.jpg",
-    options = new
-    {
-        messageType = "image",
-        caption = "Check out this image!"
-    }
-};
-
-var json = JsonConvert.SerializeObject(data);
-var content = new StringContent(json, Encoding.UTF8, "application/json");
-var response = await httpClient.PostAsync("http://localhost:8080/api/send", content);
-```
-
 ## Backward Compatibility
 
 The changes are fully backward compatible:
@@ -217,34 +131,3 @@ The changes are fully backward compatible:
 - Poll messages continue to work without modification
 - Only new message types require the `messageType` option
 
-## Testing
-
-You can test the new functionality using curl:
-
-```bash
-# Send an image
-curl -X POST http://localhost:8080/api/send \
-  -H "Content-Type: application/json" \
-  -H "Authorization: Bearer your-token" \
-  -d '{
-    "instanceId": "your-instance-id",
-    "response_msg": "https://example.com/image.jpg",
-    "options": {
-      "messageType": "image",
-      "caption": "Test image"
-    }
-  }'
-
-# Send a PDF
-curl -X POST http://localhost:8080/api/send \
-  -H "Content-Type: application/json" \
-  -H "Authorization: Bearer your-token" \
-  -d '{
-    "instanceId": "your-instance-id",
-    "response_msg": "https://example.com/document.pdf",
-    "options": {
-      "messageType": "pdf",
-      "fileName": "test-document.pdf"
-    }
-  }'
-``` 

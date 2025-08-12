@@ -184,52 +184,6 @@ function validatePDFFile(filePath) {
 }
 ```
 
-## Testing
-
-### Test with a Sample PDF
-
-1. Create a test PDF file:
-```bash
-echo "This is a test PDF" > test.pdf
-```
-
-2. Send it via the API:
-```bash
-curl -X POST http://localhost:8080/api/send \
-  -H "Content-Type: application/json" \
-  -H "Authorization: Bearer your-token" \
-  -d '{
-    "instanceId": "your-instance-id",
-    "response_msg": "./test.pdf",
-    "options": {
-      "messageType": "pdf",
-      "fileName": "test-document.pdf"
-    }
-  }'
-```
-
-## Migration from URLs
-
-### Before (URL-based)
-```json
-{
-  "response_msg": "https://example.com/document.pdf",
-  "options": {
-    "messageType": "pdf"
-  }
-}
-```
-
-### After (File-based)
-```json
-{
-  "response_msg": "/var/www/uploads/document.pdf",
-  "options": {
-    "messageType": "pdf",
-    "fileName": "document.pdf"
-  }
-}
-```
 
 ## Performance Benefits
 
@@ -256,56 +210,3 @@ curl -X POST http://localhost:8080/api/send \
 chmod 755 /var/www/uploads
 chmod 644 /var/www/uploads/*.pdf
 ```
-
-## Examples in Different Languages
-
-### Python
-```python
-import requests
-
-# Send a PDF file
-response = requests.post('http://localhost:8080/api/send', json={
-    'instanceId': 'your-instance-id',
-    'response_msg': '/path/to/document.pdf',
-    'options': {
-        'messageType': 'pdf',
-        'fileName': 'document.pdf'
-    }
-})
-```
-
-### Node.js
-```javascript
-const axios = require('axios');
-
-const response = await axios.post('http://localhost:8080/api/send', {
-    instanceId: 'your-instance-id',
-    response_msg: '/path/to/document.pdf',
-    options: {
-        messageType: 'pdf',
-        fileName: 'document.pdf'
-    }
-});
-```
-
-### PHP
-```php
-$data = [
-    'instanceId' => 'your-instance-id',
-    'response_msg' => '/path/to/document.pdf',
-    'options' => [
-        'messageType' => 'pdf',
-        'fileName' => 'document.pdf'
-    ]
-];
-
-$response = file_get_contents('http://localhost:8080/api/send', false, stream_context_create([
-    'http' => [
-        'method' => 'POST',
-        'header' => 'Content-Type: application/json',
-        'content' => json_encode($data)
-    ]
-]));
-```
-
-This enhancement makes your WhatsApp service much more flexible and secure for handling PDF documents! 

@@ -8,8 +8,6 @@ The WhatsApp service now supports downloading PDF files from S3 public URLs and 
 
 ### Before
 - Only sent URLs to WhatsApp
-- WhatsApp would download the file itself
-- Limited control over the process
 
 ### After
 - Downloads the file from S3 URL to your server
@@ -108,27 +106,6 @@ messageContent = {
 }
 ```
 
-## Benefits
-
-### 1. **Better Control**
-- You control the download process
-- Can validate files before sending
-- Can handle errors gracefully
-
-### 2. **Improved Reliability**
-- No dependency on WhatsApp's download capabilities
-- Can retry failed downloads
-- Better error handling
-
-### 3. **Security**
-- Can validate file types and sizes
-- Can check file integrity
-- More secure than sending URLs
-
-### 4. **Performance**
-- Faster uploads to WhatsApp
-- No double-downloading (WhatsApp doesn't need to download again)
-- Better user experience
 
 ## Error Handling
 
@@ -199,63 +176,6 @@ if (parseInt(contentLength) > 16 * 1024 * 1024) {
 }
 ```
 
-## Testing
-
-### Test with S3 URL
-```bash
-curl -X POST http://localhost:8080/api/send \
-  -H "Content-Type: application/json" \
-  -H "Authorization: Bearer your-token" \
-  -d '{
-    "instanceId": "your-instance-id",
-    "response_msg": "https://your-bucket.s3.amazonaws.com/test.pdf",
-    "options": {
-      "messageType": "pdf",
-      "fileName": "test-document.pdf"
-    }
-  }'
-```
-
-### Test with CloudFront URL
-```bash
-curl -X POST http://localhost:8080/api/send \
-  -H "Content-Type: application/json" \
-  -H "Authorization: Bearer your-token" \
-  -d '{
-    "instanceId": "your-instance-id",
-    "response_msg": "https://d1234.cloudfront.net/documents/report.pdf",
-    "options": {
-      "messageType": "pdf",
-      "fileName": "report.pdf"
-    }
-  }'
-```
-
-## Migration from URL-Only
-
-### Before (URL-based)
-```json
-{
-  "response_msg": "https://s3.amazonaws.com/bucket/document.pdf",
-  "options": {
-    "messageType": "pdf"
-  }
-}
-```
-
-### After (Download-based)
-```json
-{
-  "response_msg": "https://s3.amazonaws.com/bucket/document.pdf",
-  "options": {
-    "messageType": "pdf",
-    "fileName": "document.pdf"
-  }
-}
-```
-
-**Note:** The API call remains the same, but the system now downloads and sends the actual file content.
-
 ## Performance Considerations
 
 ### Download Timeouts
@@ -292,56 +212,3 @@ curl -I https://d1234.cloudfront.net/documents/report.pdf
 # Check network connectivity
 ping s3.amazonaws.com
 ```
-
-## Examples in Different Languages
-
-### Python
-```python
-import requests
-
-# Send PDF from S3 URL
-response = requests.post('http://localhost:8080/api/send', json={
-    'instanceId': 'your-instance-id',
-    'response_msg': 'https://your-bucket.s3.amazonaws.com/document.pdf',
-    'options': {
-        'messageType': 'pdf',
-        'fileName': 'document.pdf'
-    }
-})
-```
-
-### Node.js
-```javascript
-const axios = require('axios');
-
-const response = await axios.post('http://localhost:8080/api/send', {
-    instanceId: 'your-instance-id',
-    response_msg: 'https://your-bucket.s3.amazonaws.com/document.pdf',
-    options: {
-        messageType: 'pdf',
-        fileName: 'document.pdf'
-    }
-});
-```
-
-### PHP
-```php
-$data = [
-    'instanceId' => 'your-instance-id',
-    'response_msg' => 'https://your-bucket.s3.amazonaws.com/document.pdf',
-    'options' => [
-        'messageType' => 'pdf',
-        'fileName' => 'document.pdf'
-    ]
-];
-
-$response = file_get_contents('http://localhost:8080/api/send', false, stream_context_create([
-    'http' => [
-        'method' => 'POST',
-        'header' => 'Content-Type: application/json',
-        'content' => json_encode($data)
-    ]
-]));
-```
-
-This enhancement makes your WhatsApp service much more robust for handling S3-hosted PDF documents! 
