@@ -1313,6 +1313,27 @@ const sendMessage = async (instanceId, response_msg, message_object = null, to =
       return { success: false, error: 'WhatsApp connection not open' };
     }
 
+    // If sending directly to a number (not replying), verify the number is on WhatsApp
+    if (to !== null) {
+      const isGroupId = (typeof to === 'string') && (to.endsWith('@g.us') || to.includes('@g.us'));
+      if (!isGroupId) {
+        const rawNumber = (typeof to === 'string' && to.includes('@')) ? to.split('@')[0] : to;
+        try {
+          const waResult = await connection.sock.onWhatsApp(rawNumber);
+          const exists = Array.isArray(waResult) && waResult.some((entry) => entry && entry.exists);
+          if (!exists) {
+            return { success: false, error: 'Number does not exist on whatsapp' };
+          }
+        } catch (checkError) {
+          logger.warn('Failed to verify WhatsApp registration for number', {
+            to,
+            error: checkError.message,
+          });
+          // If verification fails unexpectedly, proceed to attempt sending
+        }
+      }
+    }
+
     // Determine the content to send based on message type
     let messageContent;
     const messageType = options.messageType || 'text';
